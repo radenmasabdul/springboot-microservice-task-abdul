@@ -21,37 +21,45 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+  public SecurityConfig(
+    JwtAuthenticationFilter jwtAuthenticationFilter) {
+      this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
 
   @Bean
   public SecurityFilterChain securityFilterChain(
     HttpSecurity http) throws Exception {
-      http
-          .csrf(csrf -> csrf
-              .csrfTokenRepository(
-                  CookieCsrfTokenRepository.withHttpOnlyFalse())
-              .ignoringRequestMatchers("/api/auth/login"))
 
-          .sessionManagement(session -> session
-              .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    http
+      .csrf(csrf -> csrf
+        .csrfTokenRepository(
+          CookieCsrfTokenRepository.withHttpOnlyFalse()
+        )
 
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers(
-                  "/api/auth/**",
-                  "/api/test")
-              .permitAll()
-              .anyRequest()
-              .authenticated())
+        .ignoringRequestMatchers(
+          "/api/auth/login",
+          "/api/auth/logout")
+        )
 
-          .formLogin(form -> form.disable())
-          .httpBasic(basic -> basic.disable());
-        
-      http.addFilterBefore(
-        jwtAuthenticationFilter,
-        UsernamePasswordAuthenticationFilter.class
-      );
+        .sessionManagement(session -> session
+          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+
+        .authorizeHttpRequests(auth -> auth
+          .requestMatchers(
+            "/api/auth/**",
+            "/api/test")
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+        )
+
+        .formLogin(form -> form.disable())
+        .httpBasic(basic -> basic.disable());
+
+    http.addFilterBefore(
+      jwtAuthenticationFilter,
+      UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
@@ -60,10 +68,11 @@ public class SecurityConfig {
   public AuthenticationManager authenticationManager(
     UserDetailsService userDetailsService,
     PasswordEncoder passwordEncoder) {
-      DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
 
-      authenticationProvider.setPasswordEncoder(passwordEncoder);
+    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
 
-      return new ProviderManager(authenticationProvider);
-    }
+    authenticationProvider.setPasswordEncoder(passwordEncoder);
+
+    return new ProviderManager(authenticationProvider);
+  }
 }
