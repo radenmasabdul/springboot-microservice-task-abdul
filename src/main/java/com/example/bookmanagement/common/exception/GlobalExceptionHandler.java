@@ -60,10 +60,19 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ApiResponse<Void>> handleAccessDenied(
-      AccessDeniedException exception) {
+    AccessDeniedException exception) {
 
     return ResponseHandler.buildError(
-        HttpStatus.FORBIDDEN,
-        "You do not have permission to perform this action");
+      HttpStatus.FORBIDDEN,
+      "You do not have permission to perform this action");
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(
+    IllegalArgumentException exception) {
+
+    return ResponseHandler.buildError(
+      HttpStatus.BAD_REQUEST,
+      exception.getMessage());
   }
 }
