@@ -18,13 +18,23 @@ import com.example.bookmanagement.book.entity.Book;
 public interface BookMapper {
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   Book toEntity(CreateBookRequest request);
 
+  @Mapping(target = "createdBy", source = "createdBy.id")
+  @Mapping(target = "updatedBy", source = "updatedBy.id")
   BookResponse toResponse(Book book);
 
   List<BookResponse> toResponseList(List<Book> books);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   void updateEntityFromRequest(
     UpdateBookRequest request,
     @MappingTarget Book book
@@ -32,6 +42,10 @@ public interface BookMapper {
 
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   void patchEntityFromRequest(
     PatchBookRequest request,
     @MappingTarget Book book

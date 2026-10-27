@@ -2,6 +2,7 @@ package com.example.bookmanagement.user.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,12 +64,12 @@ public class UserService {
     return userPage.map(userMapper::toResponse);
   }
 
-  public UserResponse getUserById(Long id) {
+  public UserResponse getUserById(UUID id) {
     User user = RepositoryUtils.findOrThrow(userRepository, id, "User");
     return userMapper.toResponse(user);
   }
 
-  public UserResponse updateUser(Long id, UpdateUserRequest request) {
+  public UserResponse updateUser(UUID id, UpdateUserRequest request) {
 
     User user = RepositoryUtils.findOrThrow(
       userRepository,
@@ -89,7 +90,7 @@ public class UserService {
     return userMapper.toResponse(updatedUser);
   }
 
-  public void deleteUser(Long id) {
+  public void deleteUser(UUID id) {
     if (!userRepository.existsById(id)) {
       throw new AppException(HttpStatus.NOT_FOUND, "User with ID " + id + " was not found");
     }

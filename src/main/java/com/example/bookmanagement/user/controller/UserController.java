@@ -1,6 +1,7 @@
 package com.example.bookmanagement.user.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,7 +58,7 @@ public class UserController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<UserResponse>> getUserById(
-    @PathVariable Long id) {
+    @PathVariable UUID id) {
 
     return ResponseHandler.ok(
       "User details found",
@@ -79,7 +80,7 @@ public class UserController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<ApiResponse<UserResponse>> updateUser(
-    @PathVariable Long id,
+    @PathVariable UUID id,
     @Valid @RequestBody UpdateUserRequest request) {
 
     return ResponseHandler.ok(
@@ -91,7 +92,7 @@ public class UserController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<ApiResponse<Void>> deleteUser(
-    @PathVariable Long id) {
+    @PathVariable UUID id) {
 
     userService.deleteUser(id);
 

@@ -1,6 +1,7 @@
 package com.example.bookmanagement.book.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,7 +51,7 @@ public class BookController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<BookResponse>> getBookById(
-    @PathVariable Long id
+    @PathVariable UUID id
   ) {
     
     return ResponseHandler.ok(
@@ -74,7 +75,7 @@ public class BookController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<ApiResponse<BookResponse>> updateBook(
-    @PathVariable Long id,
+    @PathVariable UUID id,
     @Valid @RequestBody UpdateBookRequest request
   ) {
 
@@ -87,7 +88,7 @@ public class BookController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<ApiResponse<BookResponse>> updatePartialBook(
-    @PathVariable Long id,
+    @PathVariable UUID id,
     @Valid @RequestBody PatchBookRequest request
   ) {
 
@@ -100,7 +101,7 @@ public class BookController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<ApiResponse<BookResponse>> deleteBook(
-    @PathVariable Long id
+    @PathVariable UUID id
   ) {
 
     bookService.deleteBook(id);
