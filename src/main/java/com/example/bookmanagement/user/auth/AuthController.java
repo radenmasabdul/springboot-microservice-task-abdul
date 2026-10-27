@@ -4,6 +4,8 @@ import com.example.bookmanagement.user.dto.response.CurrentUserResponse;
 import java.time.Duration;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +13,6 @@ import com.example.bookmanagement.common.dto.ApiResponse;
 import com.example.bookmanagement.common.util.ResponseHandler;
 import com.example.bookmanagement.user.dto.request.LoginRequest;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 public class AuthController {
 
   private static final String ACCESS_TOKEN_COOKIE = "token";
+  private static final Duration COOKIE_DURATION = Duration.ofHours(8);
 
   private final AuthService authService;
 
@@ -34,13 +36,16 @@ public class AuthController {
       
     String accessToken = authService.login(request);
       
-    Cookie accessTokenCookie = createCookie(
+    ResponseCookie accessTokenCookie = createCookie(
       ACCESS_TOKEN_COOKIE,
       accessToken,
-      (int) Duration.ofHours(8).toSeconds()
+      COOKIE_DURATION
     );
 
-    response.addCookie(accessTokenCookie);
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      accessTokenCookie.toString()
+    );
 
     return ResponseHandler.ok(
       "Login successful",
@@ -52,9 +57,15 @@ public class AuthController {
   public ResponseEntity<ApiResponse<Void>> logout(
     HttpServletResponse response) {
 
-    clearCookie(
-      response,
-      ACCESS_TOKEN_COOKIE
+    ResponseCookie expiredCookie = createCookie(
+      ACCESS_TOKEN_COOKIE,
+      "",
+      Duration.ZERO
+    );
+
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      expiredCookie.toString()
     );
 
     return ResponseHandler.ok(
@@ -75,32 +86,18 @@ public class AuthController {
     );
   }
 
-  private Cookie createCookie(
+  private ResponseCookie createCookie(
     String name,
     String value,
-    int maxAge) {
-      
-    Cookie cookie = new Cookie(name, value);
-
-    cookie.setHttpOnly(true);
-    cookie.setSecure(false);
-    cookie.setPath("/");
-    cookie.setMaxAge(maxAge);
-
-    return cookie;
-  }
-
-  private void clearCookie(
-    HttpServletResponse response,
-    String name) {
-
-    Cookie cookie = new Cookie(name, "");
-
-    cookie.setHttpOnly(true);
-    cookie.setSecure(false);
-    cookie.setPath("/");
-    cookie.setMaxAge(0);
-
-    response.addCookie(cookie);
+    Duration maxAge
+  ) {
+    
+    return ResponseCookie.from(name, value)
+      .httpOnly(true)
+      .secure(true)
+      .path("/")
+      .maxAge(maxAge)
+      .sameSite("None")
+      .build();
   }
 }
