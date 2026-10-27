@@ -1,0 +1,19 @@
+# Environment variables dan secrets
+.env
+.env.*
+!.env.example
+
+# Hasil build lokal
+target/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Sistem operasi
+.DS_Store
