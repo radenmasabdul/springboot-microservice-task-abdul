@@ -1,5 +1,6 @@
 package com.example.bookmanagement.book.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.example.bookmanagement.book.entity.Book;
 
 public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book>{
+  List<Book> findTop5ByOrderByCreatedAtDesc();
 }
